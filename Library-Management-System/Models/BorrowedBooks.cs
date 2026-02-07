@@ -10,5 +10,7 @@ namespace Library_Management_System.Models
         public int MemberID { get; set; }
         public DateTime BorrowDate { get; set; }
         public DateTime? ReturnDate { get; set; }
+        public Books Books { get; set; }
+        public Members Members { get; set; }
     }
 }

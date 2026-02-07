@@ -1,0 +1,38 @@
+﻿@model IEnumerable<Library_Management_System.Models.BorrowedBooks>
+
+<h2>Borrowed Books</h2>
+<a asp-action="Create" class="btn btn-primary">Borrow a Book</a>
+
+<table class="table table-hover">
+    <thead>
+        <tr>
+            <th>Book</th>
+            <th>Member</th>
+            <th>Borrow Date</th>
+            <th>Return Date</th>
+            <th>Overdue Days</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+    @foreach (var borrow in Model) {
+        var overdueDays = borrow.ReturnDate == null 
+            ? (DateTime.Now - borrow.BorrowDate).Days - 14 // assume 2-week due period
+            : 0;
+
+        <tr>
+            <td>@borrow.Books.Title</td>
+            <td>@borrow.Members.FirstName @borrow.Members.LastName</td>
+            <td>@borrow.BorrowDate.ToShortDateString()</td>
+            <td>@borrow.ReturnDate?.ToShortDateString()</td>
+            <td>@(overdueDays > 0 ? overdueDays : 0)</td>
+            <td>
+                @if (borrow.ReturnDate == null) {
+                    <a asp-action="MarkReturned" asp-route-id="@borrow.BorrowID" class="btn btn-info">Mark as Returned</a>
+                }
+                <a asp-action="Delete" asp-route-id="@borrow.BorrowID" class="btn btn-danger">Delete</a>
+            </td>
+        </tr>
+    }
+    </tbody>
+</table>
