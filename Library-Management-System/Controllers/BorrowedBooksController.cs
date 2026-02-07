@@ -1,4 +1,5 @@
 ﻿using Library_Management_System.Models;
+using Library_Management_System.Models.Dtos;
 using Library_Management_System.Persistance;
 
 using Microsoft.AspNetCore.Mvc;
@@ -34,31 +35,42 @@ namespace Library_Management_System.Controllers
             return View();
         }
 
-        // POST: BorrowedBooks/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(BorrowedBooks borrowedBook)
+        public async Task<IActionResult> Create(BorrowedBooksDto dto)
         {
             if (ModelState.IsValid)
             {
-                // Check if book is already borrowed and not returned
+                // Check if book is already borrowed
                 var alreadyBorrowed = _context.BorrowedBooks
-                    .Any(b => b.BookID == borrowedBook.BookID && b.ReturnDate == null);
+                    .Any(b => b.BookID == dto.BookID && b.ReturnDate == null);
 
                 if (alreadyBorrowed)
                 {
                     ModelState.AddModelError("", "This book is already borrowed and not yet returned.");
                     ViewBag.BookList = new SelectList(_context.Books, "BookID", "Title");
                     ViewBag.MemberList = new SelectList(_context.Members, "MemberID", "FirstName");
-                    return View(borrowedBook);
+                    return View(dto);
                 }
+                else
+                {
+                    var borrowedBook = new BorrowedBooks
+                    {
+                        BookID = dto.BookID,
+                        MemberID = dto.MemberID,
+                        BorrowDate = DateTime.Now
+                        
+                    };
 
-                borrowedBook.BorrowDate = DateTime.Now;
-                _context.Add(borrowedBook);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                    _context.BorrowedBooks.Add(borrowedBook);
+                    await _context.SaveChangesAsync();
+                    return RedirectToAction(nameof(Index));
+                }
             }
-            return View(borrowedBook);
+
+            ViewBag.BookList = new SelectList(_context.Books, "BookID", "Title", dto.BookID);
+            ViewBag.MemberList = new SelectList(_context.Members, "MemberID", "FirstName", dto.MemberID);
+            return View(dto);
         }
 
         // Mark as Returned

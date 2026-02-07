@@ -20,11 +20,12 @@
             ? (DateTime.Now - borrow.BorrowDate).Days - 14 // assume 2-week due period
             : 0;
 
+
         <tr>
             <td>@borrow.Books.Title</td>
             <td>@borrow.Members.FirstName @borrow.Members.LastName</td>
             <td>@borrow.BorrowDate.ToShortDateString()</td>
-            <td>@borrow.ReturnDate?.ToShortDateString()</td>
+            <td> @(borrow.ReturnDate?.ToShortDateString() ?? borrow.BorrowDate.AddDays(14).ToShortDateString())</td>
             <td>@(overdueDays > 0 ? overdueDays : 0)</td>
             <td>
                 @if (borrow.ReturnDate == null) {

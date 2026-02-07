@@ -1,4 +1,4 @@
-﻿@model Library_Management_System.Models.BorrowedBooks
+﻿@model Library_Management_System.Models.Dtos.BorrowedBooksDto
 
 <h2>Borrow a Book</h2>
 
@@ -11,6 +11,7 @@
         <label>Member</label>
         <select asp-for="MemberID" asp-items="ViewBag.MemberList" class="form-control"></select>
     </div>
+
     <button type="submit" class="btn btn-success">Borrow</button>
     <a asp-action="Index" class="btn btn-secondary">Cancel</a>
 </form>
